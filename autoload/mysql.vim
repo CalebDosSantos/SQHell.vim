@@ -50,6 +50,11 @@ endfunction
 function! mysql#ShowDatabases()
     let l:query = mysql#GetShowDatabasesQuery()
     call sqhell#InsertResultsToNewBuffer('SQHDatabase', mysql#GetResultsFromQuery(l:query), 1)
+    if exists("g:sqh_database")
+      normal gg
+      execute '/'.g:sqh_database
+      execute 'nohlsearch'
+    endif
 endfunction
 
 "Shows all tables for a given database
