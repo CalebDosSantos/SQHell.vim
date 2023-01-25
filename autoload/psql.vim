@@ -13,12 +13,14 @@ function! psql#GetResultsFromQuery(command)
     let l:system_command = 'echo ' . shellescape(join(split(a:command, "\n"))) . ' | ' . l:connection_details
     let l:query_results = system(l:system_command)
     return l:query_results
+    " return l:system_command
 endfunction
 
 
 function! psql#ShowDatabases()
-    let db_query = 'SELECT datname FROM pg_database WHERE datistemplate = false;'
-    call sqhell#InsertResultsToNewBuffer('SQHDatabase', psql#GetResultsFromQuery(db_query), 1)
+    let db_query = 'SELECT datname "Databases" FROM pg_database WHERE datistemplate = false;'
+    " return psql#GetResultsFromQuery(db_query)
+    call sqhell#InsertResultsToNewBuffer('SQHDatabase', psql#GetResultsFromQuery(db_query), 0)
 endfunction
 
 function! psql#SortResults(sort_options)
