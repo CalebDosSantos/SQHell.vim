@@ -2,13 +2,13 @@ function! psql#GetResultsFromQuery(command)
     let l:user = g:sqh_connections[g:sqh_connection]['user']
     let l:password = g:sqh_connections[g:sqh_connection]['password']
     let l:host = g:sqh_connections[g:sqh_connection]['host']
-    " if l:db
-    "   let l:db = g:sqh_connections[g:sqh_connection]['database']
+    let l:database = g:sqh_connections[g:sqh_connection]['database']
 
-    " if l:db
-      " let l:connection_details = 'PGPASSWORD='. l:password . ' psql -U' . l:user . ' -h ' . l:host . ' -d ' . l:db . ' --pset footer'
-    " else
-    let l:connection_details = 'PGPASSWORD='. l:password . ' psql -U' . l:user . ' -h ' . l:host . ' --pset footer'
+    if l:database !=? ''
+        let l:database = '-d' . l:database . ' '
+    endif
+
+    let l:connection_details = 'PGPASSWORD='. l:password . ' psql -U' . l:user . ' -h ' . l:host . ' '. l:database. ' --pset footer'
     " endif
     let l:system_command = 'echo ' . shellescape(join(split(a:command, "\n"))) . ' | ' . l:connection_details
     let l:query_results = system(l:system_command)

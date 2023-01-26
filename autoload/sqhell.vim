@@ -20,7 +20,7 @@ endfunction
 
 "Inserts SQL results into a new temporary buffer"
 function! sqhell#ExecuteCommand(command)
-    execute "call sqhell#InsertResultsToNewBuffer('SQHResult', " . g:sqh_provider . "#GetResultsFromQuery(a:command), 1)"
+    execute "call sqhell#InsertResultsToNewBuffer('SQHResult', " . g:sqh_provider . "#GetResultsFromQuery(a:command), 0)"
     let b:last_query = a:command
 endfunction
 
