@@ -99,21 +99,20 @@ function! psql#ShowRecordsInTable(table)
 endfunction
 
 function! psql#GetSelectQuery(database, table)
-    " let l:query = 'SELECT * FROM ' . a:database . '.' . a:table . ' LIMIT ' . g:sqh_results_limit
     let l:query = 'SELECT * FROM ' . a:table . ' LIMIT ' . g:sqh_results_limit
     return l:query
 endfunction
 
 
-function! psql#ShowTableDetails(database, table)
+function! psql#ShowTableDetails(table)
   echom 'Fazer detalhamento das tabelas'
-"   SELECT 
-"    table_name, 
-"    column_name, 
-"    data_type 
-" FROM 
-"    information_schema.columns
-" WHERE 
-"    table_name = 'publicacoes';
+    let t:table = a:table
+    let l:query = psql#GetDatailsQuery(psql#GetDatabase(), a:table)
+    call sqhell#ExecuteCommand(l:query)
+endfunction
 
+function! psql#GetDatailsQuery(database, table)
+    let l:query = 'SELECT table_name, column_name, data_type FROM  information_schema.columns WHERE table_name = '''.a:table.''';'
+
+    return l:query
 endfunction

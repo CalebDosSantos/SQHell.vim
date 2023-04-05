@@ -6,4 +6,4 @@ noremap <buffer> dd :call mysql#DropTableSQHTableBuf(expand('<cword>'), 1)<cr>
 "Back to the SQHDatabase
 noremap <buffer> q :execute "call " . g:sqh_provider . "#ShowDatabases()"<cr>
 " TODO
-noremap <buffer> d :execute "call " . g:sqh_provider . "#ShowTableDetails()"<cr>
+noremap <buffer> d :execute "call " . g:sqh_provider . "#ShowTableDetails(expand('<cword>'))"<cr>
