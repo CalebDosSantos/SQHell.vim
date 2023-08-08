@@ -104,15 +104,61 @@ function! psql#GetSelectQuery(database, table)
 endfunction
 
 
-function! psql#ShowTableDetails(table)
-  echom 'Fazer detalhamento das tabelas'
+function! psql#DescribeTable(table)
+  " echom 'Fazer detalhamento das tabelas'
     let t:table = a:table
-    let l:query = psql#GetDatailsQuery(psql#GetDatabase(), a:table)
+    let l:query_estrutura = psql#GetDatailsQuery(psql#GetDatabase(), a:table)
+    let l:query_fks = psql#GetForeingKeysQuery(a:table)
+    let l:query_selects = ' select col_2 as FKs_e_Colunas, col'
+
+    let l:query = l:query_estrutura . ' UNION ' . l:query_fks
+    let l:query .= ' order by col_10 '
+    " let l:query = l:query_estrutura
     call sqhell#ExecuteCommand(l:query)
 endfunction
 
 function! psql#GetDatailsQuery(database, table)
-    let l:query = 'SELECT table_name, column_name, data_type FROM  information_schema.columns WHERE table_name = '''.a:table.''';'
+    " let l:query = 'SELECT table_name, column_name, data_type FROM  information_schema.columns WHERE table_name = '''.a:table.''';'
+    let l:selects = 'SELECT '
+    let l:selects .= 'table_name as col_1'
+    let l:selects .= ', column_name as col_2 '
+    let l:selects .= ', data_type as col_4 '
+    let l:selects .= ', '' '' as col_3, '' '' as col_5, '' '' as col_6, '' '' as col_7 '
+    let l:selects .= ', ''tipo_detalhe'' as col_10 '
+
+    let l:from = ' FROM  information_schema.columns '
+    let l:where = ' WHERE table_name = '''.a:table.''''
+
+    let l:query = l:selects . l:from . l:where
+    return l:query
+endfunction
+
+function! psql#GetForeingKeysQuery(table)
+    let l:selects = ' SELECT '
+    let l:selects .= 'tc.table_schema as col_1 '
+    " let l:selects .= ',tc.constraint_name as col_8 '
+    let l:selects .= ',tc.table_name as col_3 '
+    let l:selects .= ',kcu.column_name as col_2 '
+    let l:selects .= ',ccu.table_schema AS col_5 '
+    let l:selects .= ',ccu.table_name AS col_6 ' " FK Table"
+    let l:selects .= ',ccu.column_name AS col_7 ' " FK Column"
+    let l:selects .= ',concat(''TABELA_id: '' , ccu.table_name, '' --> '', ccu.column_name) as col_4 '
+    let l:selects .= ', ''a_tipo_fks'' as col_10 '
+
+    let l:from = ' FROM information_schema.table_constraints AS tc '
+
+    let l:join = ' JOIN information_schema.key_column_usage AS kcu '
+    let l:join .= ' ON tc.constraint_name = kcu.constraint_name '
+    let l:join .= ' AND tc.table_schema = kcu.table_schema '
+
+    let l:join .= ' JOIN information_schema.constraint_column_usage AS ccu '
+    let l:join .= ' ON ccu.constraint_name = tc.constraint_name '
+    let l:join .= ' AND ccu.table_schema = tc.table_schema '
+
+    let l:where = ' WHERE tc.constraint_type = ''FOREIGN KEY'' '
+    let l:where .= ' AND tc.table_name = '''.a:table.''' '
+
+    let l:query = l:selects . l:from . l:join . l:where
 
     return l:query
 endfunction

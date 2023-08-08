@@ -136,3 +136,14 @@ endfunction
 function! sqhell#Host()
     return g:sqh_connection
 endfunction
+
+function! sqhell#ListConns(connection)
+    let l:valid_connections = keys(g:sqh_connections)
+
+    if index(l:valid_connections, a:connection) == -1
+        echom '[SQHELL] host must be one of [' . join(l:valid_connections, ', ') . ']'
+        return
+    endif
+
+    let g:sqh_connection = a:connection
+endfunction
